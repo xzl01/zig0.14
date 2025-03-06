@@ -1,0 +1,5 @@
+# ensure we can run the binary we just installed
+Test-Command: /usr/lib/zig0.13/bin/zig --help
+Depends: zig0.13
+Restrictions: allow-stderr
+Features: test-name=zigexec

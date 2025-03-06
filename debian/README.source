@@ -1,0 +1,17 @@
+The upstream tarball vendors in a number of tools and libraries.
+Generating the unvendored source file can be performed via e.g.:
+
+ uscan --repack -v
+
+uscan gets its list of excluded files from debian/copyright. We
+link the libunwind sources installed by emscripten to replace
+the vendored copy. CMake directives eliminate the need for the
+remainder.
+
+Upstream signs with minisign.
+
+There is a binary present even in the Debianized source:
+src/zig1.wasm. This is a precompiled WASM file implementing
+the zig bootstrap compiler. Its sources are present, and
+the zig binary we build can rebuild it, so it is believed
+that this comes under the compiler bootstrap exemption.

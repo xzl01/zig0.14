@@ -1,0 +1,14 @@
+version=4
+
+# example URIs:
+# https://ziglang.org/download/0.13.0/zig-0.13.0.tar.xz
+# https://ziglang.org/download/0.13.0/zig-0.13.0.tar.xz.minisig
+
+# FIXME
+#pgpsigurlmangle=s/$/.minisig/, \
+#sigtype=minisig, \
+
+opts="dversionmangle=s/\+dfsg(\.?\d+)?$//, \
+      repacksuffix=+dfsg" \
+      https://ziglang.org/download/ .*/zig-(0.13.[0-9\.]*)\.tar\.xz \
+      debian uupdate

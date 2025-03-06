@@ -1,4 +1,43 @@
 #!/usr/bin/make -f
 
+VERSION=0.14
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
 %:
-	dh $@
+	dh $@ --buildsystem=cmake
+
+override_dh_auto_configure:
+	# these files originate in mingw-win64, from which they are periodically
+	# imported into zig. i've submitted a patch to the former to convert these,
+	# but even if accepted, it'll take some time to filter down. eventually,
+	# however, we'll want to remove these recodes (and yank the BuildDep).
+	# for i in log10l.S log1pl.S log2f.S log2l.S ; do recode -f ISO-8859-1..UTF-8 lib/libc/mingw/math/x86/$$i ; done
+	# recode -f ISO-8859-1..UTF-8 lib/libc/include/any-windows-any/ddk/ide.h
+	# ln -s /usr/lib/llvm-20/lib/clang/20/include/ lib/
+	# without specifying MCPU, it targets native
+	#	we want to specify -DZIG_TARGET_TRIPLE=$(DEB_HOST_MULTIARCH), but it breaks PIE
+	dh_auto_configure -- \
+		-DZIG_PIE=ON \
+		-DZIG_SHARED_LLVM=ON \
+		-DZIG_TARGET_MCPU=$(DEB_HOST_GNU_CPU)
+
+# output of build is stage3/bin and stage3/lib
+export BBASE:=obj-$(DEB_HOST_MULTIARCH)/stage3
+
+# make a man page and move the docs to usr/share/doc
+override_dh_auto_install:
+	help2man -s 1 -N -n "zig compiler and build tool" -v version $(BBASE)/bin/zig -o zig$(VERSION).1
+	mkdir -p debian/tmp/usr/share/doc/zig$(VERSION)
+	mv $(BBASE)/lib/zig/docs/* debian/tmp/usr/share/doc/zig$(VERSION)/
+	rmdir $(BBASE)/lib/zig/docs
+	dh_auto_install
+	chrpath -d debian/tmp/usr/bin/zig
+
+override_dh_auto_test:
+	$(BBASE)/bin/zig test test/behavior.zig
+	dh_auto_test
+
+# override_dh_auto_clean:
+# 	rm -rf $(BBASE)
+# 	dh_auto_clean

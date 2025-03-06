@@ -1,15 +1,58 @@
-Source: template-repository
-Section: unknown
+Source: zig0.14
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Maintainer: xiangzelong <xiangzelong@deepin.org>
+Build-Depends: chrpath,
+               cmake (>= 3.19),
+               debhelper-compat (= 13),
+               help2man,
+               libbsd-dev,
+               libclang-20-dev,
+               libclang-cpp19-dev,
+               libedit-dev,
+               libffi-dev,
+               liblld-20-dev,
+               libmd-dev,
+               libncurses-dev,
+               libunwind-dev,
+               libxml2-dev,
+               llvm-20-dev,
+               pkgconf,
+               recode
+Standards-Version: 4.7.1
+Section: devel
+Rules-Requires-Root: no
+Homepage: https://ziglang.org/
+Vcs-Browser: https://github.org/deepin-community/zig0.14
+Vcs-Git: https://github.org/deepin-community/zig0.14.git
 
-Package: template-repository
+Package: zig0.14
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         zig0.14-data (= ${source:Version}),
+# FIXME why aren't these getting picked up by dpkg-shlibdeps?
+         libbsd0,
+         libedit2,
+         libffi8,
+         libicu72,
+         libmd0,
+         libtinfo6,
+         libxml2
+Suggests: zig-default
+Description: General-purpose imperative language
+ Zig is a general-purpose programming language and toolchain
+ for maintaining robust, optimal and reusable software.
+ .
+ This package contains the binary for Zig.
+
+Package: zig0.14-data
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+        libclang-common-20-dev
+Description: General-purpose imperative language (stdlib)
+ Zig is a general-purpose programming language and toolchain
+ for maintaining robust, optimal and reusable software.
+ .
+ This package contains the Zig standard library.
